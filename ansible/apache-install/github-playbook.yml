@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  vars_files:
+    - "vars/default.yml"
+  become: yes
+  tasks:
+  
+  - name: Download repository
+    git:
+      repo: "{{ repo_src }}"
+      dest: "{{ repo_dst }}"
+
+  # - name: "chown -R {{ app_user }} /var/www"
+  #   file:
+  #     owner: "{{ app_user }}"
+  #     path: "/var/www/{{ http_host }}"
+  #     recurse: yes
+
+  - name: List downloded files
+    find:
+      paths: "{{ repo_dst }}"
+    register: files
+
+  - debug:
+      var: files

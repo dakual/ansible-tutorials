@@ -1,0 +1,72 @@
+---
+- hosts: localhost
+  name: Github clone
+  become: true
+  tags: os_type
+  vars_files:
+    - "vars/{{ ansible_distribution }}.yml"
+    - "vars/default.yml"
+  roles:
+    - github
+
+
+- hosts: all
+  name: Apache Install
+  become: true
+  vars_files:
+    - "vars/{{ ansible_distribution }}.yml"
+    - "vars/default.yml"
+
+  tasks:
+    - name: OS Name
+      debug: var=ansible_distribution
+      tags: os_type
+
+    - package:
+        name: "{{ packageName }}"
+        state: present
+
+    - name: Copy files
+      copy:
+        src: "{{ repo_dst }}/"
+        dest: "/var/www/{{ http_host }}"
+        mode: 0644
+        owner: "{{ app_user }}"
+
+    # - name: Create document root
+    #   file:
+    #     path: "/var/www/{{ http_host }}"
+    #     state: directory
+    #     owner: "{{ app_user }}"
+    #     mode: '0755'
+
+    # - name: Copy index test page
+    #   template:
+    #     src: "site-src/index.html"
+    #     dest: "/var/www/{{ http_host }}/index.html"
+
+    - name: Set up Apache virtuahHost
+      template:
+        src: "conf/apache.conf"
+        dest: "/etc/apache2/sites-available/{{ http_conf }}"
+
+    - name: Enable new site
+      shell: /usr/sbin/a2ensite {{ http_conf }}
+      notify: Reload Apache
+
+    - name: Disable default Apache site
+      shell: /usr/sbin/a2dissite 000-default.conf
+      when: disable_default
+      notify: Reload Apache
+
+  handlers:
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
+        enabled: true

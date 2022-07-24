@@ -1,0 +1,31 @@
+version: "4.1"
+services:
+   ansible:
+     container_name: ansible
+     image: ansible
+     tty: true
+     stdin_open: true
+     build: 
+       context: ./
+     networks:
+       - ansible
+     volumes:
+       - ./ansible:/root/ansible       
+   remote_one: 
+     container_name: remote-one
+     image: remote-host
+     build: 
+       context: ./remote-hosts
+     networks:
+       - ansible
+   remote_two:
+     container_name: remote-two
+     image: remote-host
+     build: 
+       context: ./remote-hosts
+     networks:
+       - ansible
+networks:
+  ansible:
+volumes:
+  ansible:
