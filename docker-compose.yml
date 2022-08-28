@@ -13,6 +13,7 @@ services:
   #      - ./ansible:/root/ansible       
    remote_one: 
      container_name: remote-one
+     hostname: remote_one
      image: remote-host
      build: 
        context: ./remote-hosts
@@ -20,6 +21,7 @@ services:
        - ansible
    remote_two:
      container_name: remote-two
+     hostname: remote_two
      image: remote-host
      build: 
        context: ./remote-hosts
