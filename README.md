@@ -101,3 +101,9 @@ python3 -m pip install --user ansible
 ansible --version
 python3 -m pip show ansible
 ```
+
+```sh
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible
+```
