@@ -1,0 +1,39 @@
+---
+- name: Intro to Ansible Playbooks
+  hosts: all
+  become: true
+  become_method: sudo
+  vars:
+    user: bob
+    greetings: Hello World!
+    application: Ansible
+
+  tasks:
+  - name: Copy file hosts with permissions
+    ansible.builtin.copy:
+      src: ./test.txt
+      dest: /tmp/test.txt
+      mode: '0644'
+
+  - name: Add the user '{{ user }}'
+    ansible.builtin.user:
+      name: "{{ user }}"
+
+  - name: Upgrade all apt packages
+    apt:
+      force_apt_get: yes
+      update_cache: yes
+      name: nginx
+      state: present
+
+  - name: Print system uptime
+    shell: uptime -p
+    register: system_uptime
+
+  - name: Print the value of a variable
+    debug:
+      msg: "{{ greetings }}, Welcome to {{ application }}."
+
+  - name: Print uptime of managed node
+    debug:
+      msg: "{{ system_uptime }}"

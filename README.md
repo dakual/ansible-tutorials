@@ -48,6 +48,14 @@ host2 ansible_host=remote-two ansible_user=root ansible_password=password
 ```sh
 ansible all --key-file /root/.ssh/ansible -i invontery -m ping
 ```
+## Ansible ad hoc commands
+```sh
+ansible [host-pattern] -m [module] -a “[module options]”
+ansible-inventory --list
+ansible --list-hosts all
+ansible all -i hosts --limit host2 -a "/bin/echo hello"
+ansible all -i hosts -m ansible.builtin.copy -a "src=./hosts dest=/tmp/hosts"
+```
 
 ## setting default config file
 ```sh
@@ -83,4 +91,12 @@ ansible-playbook -i inventory.cfg <filename>.yml -b  // [b] become root on the r
 ansible-playbook -i inventory.cfg  --limit <ip address> <filename>.yml
 ansible-playbook --list-tags apache-install/playbook.yml // list tags
 ansible-playbook --tags web_servers --ask-become-pass apache-install/playbook.yml  // run selected tag
+```
+
+## Installing Ansible on Ubuntu
+```sh
+python3 -m pip -V
+python3 -m pip install --user ansible
+ansible --version
+python3 -m pip show ansible
 ```
