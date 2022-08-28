@@ -25,7 +25,7 @@
       update_cache: yes
       name: nginx
       state: present
-  
+
   - name: Check nginx service status
     service:
       name: nginx
