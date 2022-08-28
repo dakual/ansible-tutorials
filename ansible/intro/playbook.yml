@@ -19,12 +19,17 @@
     ansible.builtin.user:
       name: "{{ user }}"
 
-  - name: Upgrade all apt packages
+  - name: Install nginx apt package
     apt:
       force_apt_get: yes
       update_cache: yes
       name: nginx
       state: present
+  
+  - name: Check nginx service status
+    service:
+      name: nginx
+      state: started
 
   - name: Print system uptime
     shell: uptime -p
