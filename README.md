@@ -83,6 +83,11 @@ ansible all -m gather_facts  // show node facts
 ansible all -m gather_facts --tree /tmp/facts  // export node facts
 ansible all -m gather_facts | grep ansible_distribution  // get node dist
 ansible all -m setup -a 'filter=ansible_os_family'
+ansible all -a "/sbin/reboot" -f 10 -u <username>
+ansible all -m copy -a "src=/home/test.txt dest=/tmp/test.txt"
+ansible all -m file -a "dest=/path/user1/new mode=777 owner=user1 group=user1 state=directory"
+ansible all -m file -a "dest=/path/user1/new state=absent"
+ansible all -m yum -a "name=httpd state=present"
 ```
 
 ## playbook commands
@@ -93,16 +98,17 @@ ansible-playbook -i inventory.cfg  --limit <ip address> <filename>.yml
 ansible-playbook --list-tags apache-install/playbook.yml // list tags
 ansible-playbook --tags web_servers --ask-become-pass apache-install/playbook.yml  // run selected tag
 ```
-
-## Installing Ansible on Ubuntu
+## Install Ansible on Debian/Ubuntu systems
 ```sh
 python3 -m pip -V
 python3 -m pip install --user ansible
 ansible --version
 python3 -m pip show ansible
 ```
-
+## Install Ansible using pip
 ```sh
+sudo apt-get update 
+sudo apt-get install software-properties-common
 sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update
 sudo apt-get install ansible
