@@ -21,6 +21,12 @@
   notify:
       - Symbolink check
 
+# - name: Create link to the new config to enable it
+#   file:
+#     dest: /etc/nginx/sites-enabled/site.conf
+#     src: /etc/nginx/sites-available/site.conf
+#     state: link
+
 - name: Delete content & directory
   file:
     state: absent

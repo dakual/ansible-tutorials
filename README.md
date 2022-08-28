@@ -82,6 +82,7 @@ ansible all -m apt -a upgrade=dist --become -K //upgrade all nodes
 ansible all -m gather_facts  // show node facts
 ansible all -m gather_facts --tree /tmp/facts  // export node facts
 ansible all -m gather_facts | grep ansible_distribution  // get node dist
+ansible all -m setup -a 'filter=ansible_os_family'
 ```
 
 ## playbook commands
