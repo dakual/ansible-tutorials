@@ -1,0 +1,4 @@
+---
+SERVER_NAME: remote-one
+FILE_PATH: /var/www/html
+APP_NAME: Nginx Install

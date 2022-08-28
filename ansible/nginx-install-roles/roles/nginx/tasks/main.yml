@@ -1,0 +1,46 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Generate Nginx site config
+  template:
+      src: site.conf.j2
+      dest: /etc/nginx/sites-available/site.conf
+      owner: root
+      group: root
+      mode: 0755
+
+- name: Copy symbolink script
+  copy:
+      src: symbolink.sh
+      dest: /root/symbolink.sh
+      mode: 0755
+  notify:
+      - Symbolink check
+
+- name: Delete content & directory
+  file:
+    state: absent
+    path: "{{ FILE_PATH }}"
+
+- name: create directory
+  file:
+    path: "{{ FILE_PATH }}"
+    state: directory
+
+- name: Copy new index.html
+  template:
+      src: index.html.j2
+      dest: "{{ FILE_PATH }}/index.html"
+      owner: root
+      group: root
+      mode: 0755
+
+- name: Enable Nginx service
+  service:
+    name: nginx
+    enabled: yes
+    state: restarted
