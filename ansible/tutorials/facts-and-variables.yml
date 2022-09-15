@@ -1,0 +1,13 @@
+- name: Variables tutorial
+  hosts: localhost
+  vars:
+    - username: admin
+    - password: 12345
+  tasks:
+    - name: Print variables
+      debug:
+        msg: "Username: {{ username }}, Password: {{ password }}"
+    
+    - name: Print facts
+      debug:
+        msg: "IPv4 address: {{ ansible_default_ipv4.address }}"

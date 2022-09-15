@@ -1,0 +1,14 @@
+- name: "Get remote host date time"
+  hosts: localhost
+  tasks:
+    - name: Execute command
+      shell: "date"
+      register: output
+    
+    - debug: var=output.stdout_lines
+    
+    - name: This command will change the working directory to somedir/ and will only run when somedir/somelog.txt doesn't exist
+      shell: date >> somelog.txt
+      args:
+        chdir: ~/daghan
+        creates: somelog.txt

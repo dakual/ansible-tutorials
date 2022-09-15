@@ -1,0 +1,39 @@
+- name: File tutorial
+  hosts: localhost
+  vars:
+    - user: daghan
+  tasks:
+    - name: Create folder
+      file:
+        path: ~/{{ user }}
+        mode: "0755"
+        state: directory
+      
+    - name: Create file
+      file: 
+        path: ~/{{ user }}.txt
+        owner: daghan
+        group: daghan
+        mode: "0644"
+        state: touch
+
+    - name: Creates users files
+      file:
+        path: ~/{{ user }}/ansible-{{ item }}
+        state: touch
+      loop:
+        - sammy
+        - erika
+        - brian
+
+    - name: Remove file
+      file:
+        path: ~/{{ user }}.txt
+        state: absent
+
+    - name: Remove folder
+      file:
+        path: ~/{{ user }}
+        state: absent
+
+

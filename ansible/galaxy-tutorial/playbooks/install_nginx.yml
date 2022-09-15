@@ -1,0 +1,7 @@
+- name: Ansible Galaxy Tutorial
+  become: true
+  hosts: all
+  vars_files:
+    - ../vars/nginx.yml
+  roles:
+    - role: stouts.nginx

@@ -1,0 +1,24 @@
+- name: APT tutorial
+  hosts: localhost
+  tasks:
+    - name: Install apache httpd  (state=present is optional)
+      apt:
+        name: apache2
+        state: present
+
+    - name: Update repositories cache and install
+      apt:
+        name: apache2
+        update_cache: yes
+
+    - name: Remove "apache2" package
+      apt:
+        name: apache2
+        state: absent
+
+    - name: Install a list of packages
+      apt:
+        pkg:
+        - apache2
+        - mysql
+        - php

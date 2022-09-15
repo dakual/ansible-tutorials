@@ -1,0 +1,10 @@
+- name: Assert Tutorial
+  hosts: localhost
+  tasks:
+    - debug: var=ansible_os_family
+    - name: test
+      assert:
+        that: 
+        - ansible_os_family == 'RedHat'
+        fail_msg: "fail message"
+        success_msg: "success message"

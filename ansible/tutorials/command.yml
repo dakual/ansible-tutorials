@@ -1,0 +1,9 @@
+- name: Command tutorial
+  hosts: localhost
+  tasks:
+    - name: Get Linux version
+      command: uname -r
+      register: output
+
+    - name: Print output
+      debug: var=output.stdout_lines

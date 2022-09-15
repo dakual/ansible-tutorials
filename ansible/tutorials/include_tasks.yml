@@ -1,0 +1,8 @@
+- name: Include tasks tutorial
+  hosts: localhost
+  tasks:
+    - debug:
+        msg: task1
+
+    - name: Include task list in play
+      include_tasks: command.yml

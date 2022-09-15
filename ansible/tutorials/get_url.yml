@@ -1,0 +1,9 @@
+- name: Get url tutorial
+  hosts: localhost
+  tasks:
+    - name: Download foo.conf
+      get_url:
+        url: https://file-examples.com/storage/fe9d9ebd4863221cb9d752c/2017/10/file_example_JPG_100kB.jpg
+        dest: ~/daghan/test.jpg
+        mode: '0644'
+

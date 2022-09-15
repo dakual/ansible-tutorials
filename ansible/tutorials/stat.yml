@@ -1,0 +1,14 @@
+- name: Stat tutorial
+  hosts: localhost
+  tasks:
+    - name: Get file stat
+      stat:
+        path: ~/daghan/config
+      register: output
+
+    - name: Fail if the file does not belong to 'root'
+      fail:
+        msg: "Whoops! file ownership has changed. New owner is '{{ output.stat.pw_name }}'"
+      when: output.stat.pw_name != "root"
+
+    - debug: msg="{{ output.stat.pw_name }}"
