@@ -14,5 +14,4 @@ RUN adduser -s /bin/bash ansible
 
 RUN echo 'ansible:1234' | chpasswd
 
-CMD ["/usr/sbin/init"]
-# CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D"]

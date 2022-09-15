@@ -1,18 +1,27 @@
 FROM debian:11
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && \
     apt-get install sudo && \
-    apt-get install -y init && \
     apt-get install -y python3 && \
     apt-get install -y openssh-server && \
     apt-get clean
 
-RUN echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
+# workdir for ssh
 RUN mkdir /var/run/sshd
 
+# generate server keys
+RUN ssh-keygen -A
+
+# add ansible user
 RUN adduser --shell /bin/bash --gecos "" ansible
 
+# change ansible password to `1234`
 RUN echo 'ansible:1234' | chpasswd
 
+# ansible user add to sudoers
+RUN echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# run ssh server
 CMD ["/usr/sbin/sshd", "-D"]
