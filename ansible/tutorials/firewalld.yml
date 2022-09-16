@@ -1,0 +1,14 @@
+- name: Uri tutorial
+  hosts: localhost
+  tasks:
+    - name: permit traffic in default zone for https service
+      ansible.posix.firewalld:
+        service: https
+        permanent: yes
+        state: enabled
+
+    - name: do not permit traffic in default zone on port 8081/tcp
+      ansible.posix.firewalld:
+        port: 8081/tcp
+        permanent: yes
+        state: disabled

@@ -1,0 +1,10 @@
+- name: Find tutorial
+  hosts: localhost
+  tasks:
+    - name: Recursively find /var/log files older than 4 weeks and equal or greater than 1 megabyte
+      find:
+        paths: /var/log
+        age: 4w
+        size: 1m
+        patterns: '*.old,*.log.gz'
+        recurse: yes

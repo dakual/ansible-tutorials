@@ -1,0 +1,10 @@
+- name: ini File tutorial
+  hosts: localhost
+  tasks:
+    - name: Ensure "temperature=cold is in section "[drinks]" in specified file
+      community.general.ini_file:
+        path: ../hosts
+        section: group1
+        option: ansible_host
+        value: 172.18.0.2
+        backup: true

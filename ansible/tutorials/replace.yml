@@ -1,0 +1,16 @@
+- name: Replace tutorial
+  hosts: localhost
+  tasks:
+    - name: Replace old hostname with new hostname
+      replace:
+        path: /etc/hosts
+        regexp: '(\s+)old\.host\.name(\s+.*)?$'
+        replace: '\1new.host.name\2'
+
+    - name: Replace between the expressions
+      replace:
+        path: /etc/hosts
+        after: '<VirtualHost [*]>'
+        before: '</VirtualHost>'
+        regexp: '^(.+)$'
+        replace: '# \1'
