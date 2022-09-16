@@ -1,0 +1,7 @@
+- name: Git tutorial
+  hosts: localhost
+  tasks:
+    - name: Git checkout
+      git:
+        repo: 'https://github.com/dakual/example-site.git'
+        dest: ./checkout
