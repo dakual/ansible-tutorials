@@ -5,7 +5,7 @@ docker compose up -d
 
 ## show docker container ip iaddress
 ```sh
-docker inspect remote-one | grep IPAddress
+docker inspect debian | grep IPAddress
 ```
 
 ## show ip address
@@ -39,12 +39,17 @@ ssh ansible@172.25.0.3
 
 ## Create invontery list in working directory
 ```sh
-nano /root/my_workdir/invontery
+nano /root/my_workdir/hosts
 ```
 ```sh
 [group1]
-host1 ansible_host=remote-one ansible_user=root ansible_password=password
-host2 ansible_host=remote-two ansible_user=root ansible_password=password
+debian ansible_host=172.25.0.2
+
+[group2]
+centos ansible_host=172.25.0.3
+
+[group3]
+ec2 ansible_host=18.193.75.239
 ```
 
 ## ping all invontery
