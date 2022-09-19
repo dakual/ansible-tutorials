@@ -1,0 +1,17 @@
+FROM centos:7
+
+RUN yum -y update && \
+    yum -y install sudo && \
+    yum -y install python3 && \
+    yum -y install openssh-server && \
+    yum clean all
+
+RUN echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+RUN ssh-keygen -A
+
+RUN adduser -s /bin/bash ansible
+
+RUN echo 'ansible:1234' | chpasswd
+
+CMD ["/usr/sbin/sshd", "-D"]

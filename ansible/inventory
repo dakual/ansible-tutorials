@@ -1,3 +1,0 @@
-[group1]
-host1 ansible_host=remote-one ansible_user=root ansible_password=password
-host2 ansible_host=remote-two ansible_user=root ansible_password=password
