@@ -1,0 +1,20 @@
+- name: Role Demo
+  hosts: all
+  become: true
+  vars:
+    wp_version: 5.7.1
+    wp_sitename: 'localhost'
+    wp_install_dir: "/var/www/html"
+    wp_db_host: 'localhost'
+    wp_db_name: 'database'
+    wp_db_user: 'mysql_user'
+    wp_db_password: 'mysql_pass'
+    wp_db_charset: 'utf8'
+    wp_db_collate: ''
+    wp_table_prefix: 'wp_'
+    wp_debug: false
+  roles:
+    - php
+    - mysql
+    - nginx
+    - wordpress

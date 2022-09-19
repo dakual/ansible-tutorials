@@ -1,0 +1,6 @@
+---
+- name: Start PHP-FPM service
+  service:
+    name: "php{{ php_version.stdout }}-fpm"
+    enabled: yes
+    state: started

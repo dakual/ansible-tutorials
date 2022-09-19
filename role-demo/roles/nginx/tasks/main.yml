@@ -1,0 +1,21 @@
+---
+- name: Install
+  apt:
+    name: nginx
+    state: present
+
+- name: Generate site config
+  template:
+    src: site.conf.j2
+    dest: /etc/nginx/sites-available/site.conf
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create link to the new config to enable it
+  file:
+    dest: /etc/nginx/sites-enabled/site.conf
+    src: /etc/nginx/sites-available/site.conf
+    state: link
+  notify:
+  - Start Nginx service

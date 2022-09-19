@@ -1,0 +1,52 @@
+---
+- name: Delete content & directory
+  file:
+    path: "{{ wp_install_dir }}"
+    state: absent
+    
+- name: Create directory
+  file:
+    path: "{{ wp_install_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Download and Extract
+  unarchive:
+    src: "http://wordpress.org/wordpress-{{ wp_version }}.tar.gz"
+    dest: "{{ wp_install_dir }}"
+    remote_src: yes
+
+- name: Move files
+  command: cp -rf . "{{ wp_install_dir }}"
+  args:
+    chdir: "{{ wp_install_dir }}/wordpress/"
+
+- name: Delete old wordpress directory
+  file:
+    state: absent
+    path: "{{ wp_install_dir }}/wordpress/"
+
+- name: Fetch random salts for wp-config.php
+  delegate_to: localhost
+  uri:
+    url: https://api.wordpress.org/secret-key/1.1/salt/
+    return_content: yes
+  become: False
+  register: "wp_salt_array"
+
+- name: Set wp_salt fact
+  set_fact:
+    wp_salt: "{{ wp_salt_array.content }}"
+
+- name: Copy wp-config.php file
+  template:
+    src: wp-config.php.j2
+    dest: "{{ wp_install_dir }}/wp-config.php"
+
+- name: Change ownership of installation directory
+  file:
+    path: "{{ wp_install_dir }}"
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
