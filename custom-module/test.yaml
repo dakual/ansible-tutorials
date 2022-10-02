@@ -1,0 +1,8 @@
+- name: Module tutorial
+  hosts: localhost
+  tasks:
+    - name: Custom module
+      custom_module:
+        filename: "~/Genel/ansible/custom-module/file.txt"
+        content: "Merhaba Ansible!"
+        state: present
