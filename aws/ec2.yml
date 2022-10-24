@@ -1,0 +1,58 @@
+---
+- name: Ansible EC2 instance module demo
+  hosts: localhost
+  gather_facts: false
+  vars:
+    region: eu-central-1
+    action: none
+  tasks:
+    - name: Gather information about all instances
+      when: action == "get_instances"
+      amazon.aws.ec2_instance_info:
+        region: "{{ region }}"
+        filters:
+          instance-state-name: ["running"]
+      register: ec2_info
+
+    - name: Displaying output
+      when: action == "get_instances"
+      debug: 
+        var: item.instance_id
+      with_items: "{{ ec2_info.instances }}"
+      
+    - name: start an instance with a public IP address
+      when: action == "create"
+      amazon.aws.ec2_instance:
+        name: "public-compute-instance"
+        key_name: mykey
+        instance_type: t2.micro
+        image_id: ami-0a5b5c0ea66ec560d
+        state: running
+        wait: yes
+        count: 1
+        vpc_subnet_id: subnet-0e00855f4313be466
+        security_group: default
+        network:
+          assign_public_ip: true
+        aws_region: "{{ region }}"
+        tags:
+          Environment: Testing
+      register: ec2_info
+      
+    - name: Displaying output
+      when: action == "create"
+      debug:
+        msg: |
+          Instance ID: {{ item.instance_id }}
+          Public IP: {{ item.public_ip_address }}
+          Public DNS Name: {{ item.public_dns_name }}
+      with_items: "{{ ec2_info.instances }}"
+      
+
+    - name: Terminate instance in a region.
+      when: action == "terminate"
+      amazon.aws.ec2_instance:
+        state: absent
+        wait: no
+        filters:
+          instance-state-name: running
