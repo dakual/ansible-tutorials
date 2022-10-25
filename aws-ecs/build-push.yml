@@ -1,0 +1,39 @@
+---
+- name: Build Docker image and push to ECR repository
+  hosts: localhost
+  connection: local
+  tasks:
+
+  - name: Import variables
+    include_vars: variables.yml
+
+  - name: Get app from GitHub
+    git:
+      repo: "https://github.com/dakual/demo-app.git"
+      dest: "{{ app_name }}"
+      force: yes
+
+  - name: Create Amazon ECR repository
+    community.aws.ecs_ecr:
+      name: "{{ app_name }}"
+    register: ecr_repo
+
+  - name: Update variables file with repo URI
+    lineinfile:
+      path: variables.yml
+      regex: '^ecr_repo:'
+      line: "ecr_repo: {{ ecr_repo.repository.repositoryUri }}"
+
+  - name: Log into AWS ECR docker registry
+    shell: "aws ecr get-login-password | docker login --username AWS --password-stdin {{ ecr_repo.repository.repositoryUri }}"
+    when: ecr_repo.repository.repositoryUri is not none and ecr_repo.repository.repositoryUri != ''
+
+  - name: Build Docker image and push to AWS ECR repository
+    docker_image:
+      build:
+        path: "./{{ app_name }}"
+      name: "{{ ecr_repo.repository.repositoryUri }}"
+      tag: latest
+      push: yes
+      source: build
+      force_source: yes

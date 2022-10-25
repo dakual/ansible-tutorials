@@ -1,0 +1,9 @@
+---
+region: eu-central-1
+app_name: demo-app
+ecs_cluster: demo-cluster
+ecs_subnet: 
+  - subnet-0535e60978084785d
+ecs_sg: 
+  - sg-095938d5e717361ea
+ecr_repo: 

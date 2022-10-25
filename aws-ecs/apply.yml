@@ -1,0 +1,71 @@
+---
+- name: Create ECR Cluster and Task
+  hosts: localhost
+  connection: local
+  tasks:
+
+  - name: Import variables
+    include_vars: variables.yml
+
+  - name: "Create a role and attach a managed policy"
+    community.aws.iam_role:
+      name: "{{ app_name }}-task-role"
+      assume_role_policy_document: "{{ lookup('file','policy.json') }}"
+      managed_policies:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+    register: task_role
+
+  - name: Create a log group for the logs
+    cloudwatchlogs_log_group:
+      retention: 30
+      state: present
+      log_group_name: "{{ ecs_cluster }}"
+
+  - name: Cluster creation
+    community.aws.ecs_cluster:
+      name: "{{ ecs_cluster }}"
+      state: present
+
+  - name: Create task definition
+    community.aws.ecs_taskdefinition:
+      family: "{{ app_name }}-task"
+      execution_role_arn: "{{ task_role.arn }}"
+      task_role_arn: "{{ task_role.arn }}"
+      containers:
+      - name: "{{ app_name }}"
+        essential: true
+        image: "{{ ecr_repo }}"
+        portMappings:
+        - containerPort: 5000
+          hostPort: 5000
+        environment:
+          - name: "APP_MESSAGE"
+            value: "This is ansible deployment"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: "{{ ecs_cluster }}"
+            awslogs-region: "{{ region }}"
+            awslogs-stream-prefix: "{{ ecs_cluster }}-containers"
+      launch_type: FARGATE
+      cpu: 256
+      memory: 512
+      state: present
+      network_mode: awsvpc
+
+  - name: create ECS service on VPC network
+    community.aws.ecs_service:
+      state: present
+      name: "{{ app_name }}-service"
+      cluster: "{{ ecs_cluster }}"
+      task_definition: "{{ app_name }}-task"
+      desired_count: 1
+      launch_type: FARGATE
+      scheduling_strategy: REPLICA
+      network_configuration:
+        subnets: "{{ ecs_subnet }}"
+        security_groups: "{{ ecs_sg }}"
+        assign_public_ip: yes
+      deployment_configuration:
+        minimum_healthy_percent: 75
+        maximum_percent: 150

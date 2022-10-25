@@ -1,0 +1,43 @@
+---
+- name: Detele ECR Cluster and Task
+  hosts: localhost
+  connection: local
+  tasks:
+  
+  - name: Import variables
+    include_vars: variables.yml
+ 
+  - name: Delete ECR repository
+    shell: aws ecr delete-repository --repository-name {{ app_name }} --force
+    ignore_errors: yes
+
+  - name: Detele a log group
+    cloudwatchlogs_log_group:
+      log_group_name: "{{ ecs_cluster }}"
+      state: absent
+      
+  - name: Detele the role
+    community.aws.iam_role:
+      name: mynewrole
+      assume_role_policy_document: "{{ lookup('file','policy.json') }}"
+      state: absent
+
+  - name: Detele task definition
+    community.aws.ecs_taskdefinition:
+      arn: []
+      family: "{{ app_name }}-task"
+      state: absent
+      containers:
+      - name: "{{ app_name }}"
+
+  - name: Detele ECS service
+    community.aws.ecs_service:
+      name: "{{ app_name }}-service"
+      cluster: "{{ ecs_cluster }}"
+      state: absent
+      force_deletion: yes
+
+  - name: Detele the cluster
+    community.aws.ecs_cluster:
+      name: "{{ ecs_cluster }}"
+      state: absent
