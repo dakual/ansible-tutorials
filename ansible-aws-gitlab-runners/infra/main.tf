@@ -1,14 +1,3 @@
-locals {
-  name             = "gitlab-runner"
-  region           = "eu-central-1"
-  vpc_id           = "vpc-0d8d5538112eedd18"
-  subnet_id        = "subnet-040da219a6ce27dd5"
-  ami              = "ami-0a5b5c0ea66ec560d"
-  ssh_user         = "admin"
-  key_name         = "mykey"
-  private_key_path = "~/.aws/pems/mykey.pem"
-}
-
 terraform {
   required_providers {
     aws = {
@@ -21,6 +10,19 @@ terraform {
 provider "aws" {
   region = local.region
 }
+
+
+locals {
+  name             = "gitlab-runner"
+  region           = "eu-central-1"
+  vpc_id           = "vpc-0d8d5538112eedd18"
+  subnet_id        = "subnet-040da219a6ce27dd5"
+  ami              = "ami-0a5b5c0ea66ec560d"
+  ssh_user         = "admin"
+  key_name         = "mykey"
+  private_key_path = "~/.aws/pems/mykey.pem"
+}
+
 
 resource "aws_security_group" "main" {
   name   = "${local.name}-sg"
@@ -56,15 +58,13 @@ resource "aws_instance" "main" {
   vpc_security_group_ids      = [aws_security_group.main.id]
   key_name                    = local.key_name
 
-  provisioner "remote-exec" {
-    inline = ["echo 'Wait until SSH is ready'"]
+  user_data                   = <<EOF
+    #!/bin/bash
+    touch ~/log.txt
+  EOF
 
-    connection {
-      type        = "ssh"
-      user        = local.ssh_user
-      private_key = file(local.private_key_path)
-      host        = aws_instance.main.public_ip
-    }
+  lifecycle {
+    ignore_changes = [user_data]
   }
 }
 
