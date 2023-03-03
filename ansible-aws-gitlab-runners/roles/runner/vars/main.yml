@@ -1,0 +1,4 @@
+---
+container_name: gitlab-runner
+container_image: gitlab/gitlab-runner:latest
+container_command: echo Hello, Ansible!

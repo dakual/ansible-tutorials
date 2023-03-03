@@ -1,0 +1,27 @@
+---
+- name: Run Gitlab runner container
+  community.docker.docker_container:
+    name: "{{ container_name }}"
+    image: "{{ container_image }}"
+    volumes:
+      - /srv/gitlab-runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    state: started
+    restart_policy: always
+    pull: true
+
+- name: Generate runner config
+  template:
+    src: config.toml
+    dest: /srv/gitlab-runner/config/config.toml
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Execute command inside a container
+  community.docker.docker_container_exec:
+    container: "{{ container_name }}"
+    argv:
+      - /bin/sh
+      - "-c"
+      - "gitlab-runner register --non-interactive --executor 'docker' --docker-image alpine:latest --url 'https://gitlab.com/' --registration-token 'GR13489415Cs1vakxUvYHkvUs4K_3' --description 'Runner 1' --tag-list 'docker' --run-untagged='true' --locked='false' --access-level='not_protected'"
